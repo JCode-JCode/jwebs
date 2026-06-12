@@ -3,7 +3,8 @@
 [![Python Version](https://img.shields.io/badge/python-3.8%2B-blue)](https://www.python.org/downloads/)
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
 [![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
-[![PyPI version](https://badge.fury.io/py/jwebs.svg)](https://badge.fury.io/py/jwebs)
+[![PyPI version](https://img.shields.io/pypi/v/jwebs)](https://pypi.org/project/jwebs/)
+[![PyPI project](https://img.shields.io/badge/PyPI-jwebs-blue)](https://pypi.org/project/jwebs/)
 
 <br>
 
@@ -162,6 +163,7 @@ You can report bugs via GitHub Issues or submit fixes via pull requests.
 
 **· GitHub repository:**
 https://github.com/JCode-JCode/jwebs
+
 **· PyPI page:**
 https://pypi.org/project/jwebs/
 
