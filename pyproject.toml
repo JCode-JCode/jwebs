@@ -1,0 +1,32 @@
+[build-system]
+requires = ["setuptools>=61.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "jwebs"
+version = "1.0.0"
+description = "A powerful and advanced web scraping and automation library for Python"
+authors = [{name = "J Code"}]
+license = {file = "LICENSE"}
+readme = "README.md"
+requires-python = ">=3.8"
+dependencies = [
+    "urllib3>=1.26",
+    "beautifulsoup4>=4.12",
+    "lxml>=4.9"
+]
+
+[project.urls]
+Homepage = "https://github.com/JCode-JCode/jwebs"
+Repository = "https://github.com/JCode-JCode/jwebs"
+
+[project.optional-dependencies]
+sentiment = ["vaderSentiment"]
+translation = ["deep-translator"]
+brotli = ["brotli>=1.0.0"]
+distributed = ["redis>=4.5.0"]
+http2 = ["httpx[http2]>=0.27.0"]
+all = ["vaderSentiment", "deep-translator", "chardet", "charset_normalizer", "brotli>=1.0.0", "redis>=4.5.0", "httpx[http2]>=0.27.0"]
+
+[tool.setuptools.packages.find]
+where = ["src"]
