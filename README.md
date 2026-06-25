@@ -33,7 +33,7 @@ print(f"Content length: {len(resp.text)}")
 
 **· HTTP** – HTTP/1.1 and HTTP/2 (user selectable), Keep‑Alive, automatic redirects, batch concurrent requests.
 
-**· Request** Management – Two‑layer cache (memory + SQLite), rate limiting (Token Bucket), robots.txt respect, session management.
+**· Request Management** – Two‑layer cache (memory + SQLite), rate limiting (Token Bucket), robots.txt respect, session management.
 
 **· Security & Flexibility** – User‑Agent rotation, dynamic proxy rotation, client certificates (mTLS), SSL and security headers checking.
 
