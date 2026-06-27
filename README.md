@@ -46,7 +46,7 @@ print(f"Content length: {len(resp.text)}")
 
 **· Utilities** – Sitemap.xml generator, RSS feed generator, GraphQL client, async client.
 
-**· AI** (optional) – Intelligent data extraction via natural language instructions (DeepSeek/OpenAI) and text summarization.
+**· AI (optional)** – Intelligent data extraction via natural language instructions (DeepSeek/OpenAI) and text summarization.
 
 ---
 
