@@ -24,6 +24,7 @@ from .constants import (
 )
 from .exceptions import JWebsError, JWebsTimeoutError, RobotsBlockedError
 
+
 class HTTPXClient:
     _DEFAULT_UA_LIST = [
         'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36',
@@ -153,12 +154,14 @@ class HTTPXClient:
 
     def _build_headers(self, headers: Optional[Dict] = None,
                        session_id: Optional[str] = None) -> Dict:
-        final_headers = self.default_headers.copy()
-        final_headers['User-Agent'] = self._get_next_ua()
+        final_headers = {
+            **self.default_headers,
+            'User-Agent': self._get_next_ua(),
+            **(headers or {})
+        }
         if self.referrer:
             final_headers['Referer'] = self.referrer
-        if headers:
-            final_headers.update(headers)
+
         if session_id and self._get_feature('session'):
             if self.allow_expired_sessions:
                 if session_id in self.session_manager.sessions:
