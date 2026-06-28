@@ -48,7 +48,14 @@ def _safe_parse_html(html: str, features: str = 'lxml') -> BeautifulSoup:
     try:
         return BeautifulSoup(html, features)
     except Exception:
-        return BeautifulSoup(html, 'html.parser')
+        pass
+    try:
+        import justhtml
+        doc = justhtml.parse(html)
+        return BeautifulSoup(str(doc), 'html.parser')
+    except ImportError:
+        pass
+    return BeautifulSoup(html, 'html.parser')
 
 def encode_auth(user: str, password: str, encoding: str = "base64") -> str:
     credentials = f"{user}:{password}".encode('utf-8')

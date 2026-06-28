@@ -1,3 +1,4 @@
+# jwebs/core/http2.py
 # Copyright 2026 J Code
 # SPDX-License-Identifier: Apache-2.0
 import time
@@ -23,7 +24,6 @@ from .constants import (
     DEFAULT_MAX_WORKERS, DEFAULT_HTTP_TIMEOUT, DEFAULT_CONNECT_TIMEOUT
 )
 from .exceptions import JWebsError, JWebsTimeoutError, RobotsBlockedError
-
 
 class HTTPXClient:
     _DEFAULT_UA_LIST = [

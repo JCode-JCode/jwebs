@@ -45,7 +45,6 @@ except ImportError:
 from urllib3 import PoolManager, ProxyManager, Timeout as Urllib3Timeout, Retry
 import ssl
 
-
 class HTTPResponse:
     __slots__ = (
         'status', 'headers', 'data', 'url', 'error', 'elapsed',
@@ -293,7 +292,6 @@ class HTTPResponse:
 
     def __del__(self):
         self.close()
-
 
 class FastHTTP:
     _DEFAULT_UA_LIST = [

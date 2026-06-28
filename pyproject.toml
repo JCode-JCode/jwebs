@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "jwebs"
-version = "1.0.4"
+version = "1.0.5"
 description = "A powerful and advanced web scraping and automation library for Python"
 authors = [{name = "J Code"}]
 license = "Apache-2.0"
@@ -13,7 +13,7 @@ requires-python = ">=3.8"
 dependencies = [
     "urllib3>=1.26",
     "beautifulsoup4>=4.12",
-    "lxml>=4.9"
+    "justhtml>=0.1.0"
 ]
 
 [project.urls]
@@ -26,7 +26,17 @@ translation = ["deep-translator"]
 brotli = ["brotli>=1.0.0"]
 distributed = ["redis>=4.5.0"]
 http2 = ["httpx[http2]>=0.27.0"]
-all = ["vaderSentiment", "deep-translator", "chardet", "charset_normalizer", "brotli>=1.0.0", "redis>=4.5.0", "httpx[http2]>=0.27.0"]
+lxml = ["lxml>=4.9"]
+all = [
+    "vaderSentiment",
+    "deep-translator",
+    "chardet",
+    "charset_normalizer",
+    "brotli>=1.0.0",
+    "redis>=4.5.0",
+    "httpx[http2]>=0.27.0",
+    "lxml>=4.9"
+]
 
 [tool.setuptools.packages.find]
 where = ["src"]
