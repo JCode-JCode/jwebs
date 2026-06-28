@@ -24,7 +24,6 @@ from .constants import (
 )
 from .exceptions import JWebsError, JWebsTimeoutError, RobotsBlockedError
 
-
 class HTTPXClient:
     _DEFAULT_UA_LIST = [
         'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36',
@@ -65,6 +64,7 @@ class HTTPXClient:
                  log_level: int = logging.INFO,
                  log_console: bool = True,
                  suppress_ssl_warnings: bool = True):
+
         self.http_version = http_version
         self.timeout = timeout
         self.connect_timeout = connect_timeout
@@ -410,6 +410,7 @@ class HTTPXClient:
             current_json = json
             current_data = data
             current_params = params
+
             for _ in range(max_redirs + 1):
                 resp = client.request(method=current_method, url=current_url,
                                       headers=current_headers, json=current_json,

@@ -4,10 +4,10 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "jwebs"
-version = "1.0.0"
+version = "1.0.1"
 description = "A powerful and advanced web scraping and automation library for Python"
 authors = [{name = "J Code"}]
-license = {file = "LICENSE"}
+license = "Apache-2.0"
 readme = "README.md"
 requires-python = ">=3.8"
 dependencies = [

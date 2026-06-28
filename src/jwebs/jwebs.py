@@ -3,6 +3,8 @@
 import logging
 import sys
 import os
+import base64
+import hashlib
 from typing import Optional, Dict, Any, List, Tuple, Union
 
 from urllib.parse import urlparse
@@ -35,7 +37,6 @@ from .async_ import AsyncClient
 
 IS_ANDROID = hasattr(sys, 'getandroidapilevel') or 'ANDROID_STORAGE' in os.environ
 IS_IOS = sys.platform == 'ios' or 'IPHONE' in os.environ
-
 
 class JWebs:
     def __init__(self,
@@ -115,7 +116,8 @@ class JWebs:
                  client_cert_cfg: Optional[Union[Dict, ClientCertConfig]] = None,
                  full_init: bool = True,
                  http_version: str = 'auto',
-                 max_connections: Optional[int] = None):
+                 max_connections: Optional[int] = None,
+                 auth: Optional[Union[Tuple[str, str], Dict, bool]] = None):
 
         if http is not None:
             if isinstance(http, dict):
@@ -436,6 +438,7 @@ class JWebs:
             'http_version': http_version,
             'max_connections': max_connections,
             'cache_max_item_size': cache_max_item_size,
+            'auth': auth,
         }
         self._full_init = full_init
 
@@ -488,6 +491,8 @@ class JWebs:
             async_timeout=async_timeout,
             session_idle=session_idle_timeout
         )
+
+        self._default_auth = auth
 
     def _build_all_components(self):
         kwargs = self._init_kwargs
@@ -546,6 +551,51 @@ class JWebs:
             timeout=kwargs['async_timeout'],
             connect_timeout=kwargs['async_connect_timeout']
         )
+
+    def _encode_auth(self, auth: Union[Tuple[str, str], Dict, bool]) -> str:
+        if auth is None or auth is False:
+            return None
+        if isinstance(auth, tuple) and len(auth) == 2:
+            user, password = auth
+            encoding = "base64"
+        elif isinstance(auth, dict):
+            user = auth.get("user")
+            password = auth.get("password")
+            encoding = auth.get("encoding", "base64")
+            if not user or not password:
+                raise ValueError("auth dict must contain 'user' and 'password' keys")
+        else:
+            raise TypeError("auth must be a tuple (user, password) or a dict with 'user', 'password', 'encoding'")
+
+        credentials = f"{user}:{password}".encode('utf-8')
+        if encoding == "base64":
+            encoded = base64.b64encode(credentials).decode('utf-8')
+        elif encoding == "base85":
+            encoded = base64.b85encode(credentials).decode('utf-8')
+        elif encoding.startswith("hash-"):
+            algo_name = encoding.split("-", 1)[1]
+            try:
+                hash_func = getattr(hashlib, algo_name)
+            except AttributeError:
+                raise ValueError(f"Unsupported hash algorithm: {algo_name}. Use sha256, sha512, md5, sha1, etc.")
+            hashed = hash_func(credentials).digest()
+            encoded = base64.b64encode(hashed).decode('utf-8')
+        else:
+            raise ValueError(
+                f"Unsupported encoding: {encoding}. Use 'base64', 'base85', or 'hash-*' (e.g., hash-sha256)."
+            )
+        return f"Basic {encoded}"
+
+    def _apply_auth(self, auth: Optional[Union[Tuple[str, str], Dict, bool]], kwargs: Dict) -> Dict:
+        effective_auth = auth if auth is not None else self._default_auth
+        if effective_auth is not None and effective_auth is not False:
+            auth_header = self._encode_auth(effective_auth)
+            if auth_header:
+                if 'headers' in kwargs:
+                    kwargs['headers'] = {**kwargs['headers'], 'Authorization': auth_header}
+                else:
+                    kwargs['headers'] = {'Authorization': auth_header}
+        return kwargs
 
     @property
     def checker(self):
@@ -667,35 +717,46 @@ class JWebs:
     def robots_enabled(self) -> bool:
         return self.http.robots_enabled if hasattr(self.http, 'robots_enabled') else False
 
-    def GET(self, url: str, **kwargs) -> HTTPResponse:
+    def GET(self, url: str, auth: Optional[Union[Tuple[str, str], Dict, bool]] = None, **kwargs) -> HTTPResponse:
+        kwargs = self._apply_auth(auth, kwargs)
         return self.http.GET(url, **kwargs)
 
-    def POST(self, url: str, **kwargs) -> HTTPResponse:
+    def POST(self, url: str, auth: Optional[Union[Tuple[str, str], Dict, bool]] = None, **kwargs) -> HTTPResponse:
+        kwargs = self._apply_auth(auth, kwargs)
         return self.http.POST(url, **kwargs)
 
-    def PUT(self, url: str, **kwargs) -> HTTPResponse:
+    def PUT(self, url: str, auth: Optional[Union[Tuple[str, str], Dict, bool]] = None, **kwargs) -> HTTPResponse:
+        kwargs = self._apply_auth(auth, kwargs)
         return self.http.PUT(url, **kwargs)
 
-    def PATCH(self, url: str, **kwargs) -> HTTPResponse:
+    def PATCH(self, url: str, auth: Optional[Union[Tuple[str, str], Dict, bool]] = None, **kwargs) -> HTTPResponse:
+        kwargs = self._apply_auth(auth, kwargs)
         return self.http.PATCH(url, **kwargs)
 
-    def DELETE(self, url: str, **kwargs) -> HTTPResponse:
+    def DELETE(self, url: str, auth: Optional[Union[Tuple[str, str], Dict, bool]] = None, **kwargs) -> HTTPResponse:
+        kwargs = self._apply_auth(auth, kwargs)
         return self.http.DELETE(url, **kwargs)
 
-    def HEAD(self, url: str, **kwargs) -> HTTPResponse:
+    def HEAD(self, url: str, auth: Optional[Union[Tuple[str, str], Dict, bool]] = None, **kwargs) -> HTTPResponse:
+        kwargs = self._apply_auth(auth, kwargs)
         return self.http.HEAD(url, **kwargs)
 
-    def OPTIONS(self, url: str, **kwargs) -> HTTPResponse:
+    def OPTIONS(self, url: str, auth: Optional[Union[Tuple[str, str], Dict, bool]] = None, **kwargs) -> HTTPResponse:
+        kwargs = self._apply_auth(auth, kwargs)
         return self.http.OPTIONS(url, **kwargs)
 
-    def TEXT(self, url: str, **kwargs) -> Optional[str]:
+    def TEXT(self, url: str, auth: Optional[Union[Tuple[str, str], Dict, bool]] = None, **kwargs) -> Optional[str]:
+        kwargs = self._apply_auth(auth, kwargs)
         return self.http.TEXT(url, **kwargs)
 
-    def JSON(self, url: str, **kwargs) -> Optional[Any]:
+    def JSON(self, url: str, auth: Optional[Union[Tuple[str, str], Dict, bool]] = None, **kwargs) -> Optional[Any]:
+        kwargs = self._apply_auth(auth, kwargs)
         return self.http.JSON(url, **kwargs)
 
     def BATCH(self, urls: List[str], method: str = 'GET', max_workers: Optional[int] = None,
-              raise_on_error: bool = False, **kwargs) -> Dict[str, Any]:
+              raise_on_error: bool = False, auth: Optional[Union[Tuple[str, str], Dict, bool]] = None,
+              **kwargs) -> Dict[str, Any]:
+        kwargs = self._apply_auth(auth, kwargs)
         return self.http.BATCH(urls, method, max_workers, raise_on_error, **kwargs)
 
     def SET_FEATURES(self, **kwargs):

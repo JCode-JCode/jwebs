@@ -45,7 +45,6 @@ except ImportError:
 from urllib3 import PoolManager, ProxyManager, Timeout as Urllib3Timeout, Retry
 import ssl
 
-
 class HTTPResponse:
     def __init__(self, urllib3_response=None, *, status: int = 0, data: bytes = b"",
                  headers: Optional[Dict] = None, url: str = "", error: Optional[str] = None,
@@ -288,7 +287,6 @@ class HTTPResponse:
     def __del__(self):
         self.close()
 
-
 class FastHTTP:
     _DEFAULT_UA_LIST = [
         'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36',
@@ -304,7 +302,7 @@ class FastHTTP:
                  connect_timeout: Optional[float] = DEFAULT_CONNECT_TIMEOUT,
                  use_cache: bool = False,
                  cache_ttl: float = DEFAULT_CACHE_TTL,
-                 cache_max_item_size: Optional[int] = 5 * 1024 * 1024,  # 5 MB
+                 cache_max_item_size: Optional[int] = 5 * 1024 * 1024,
                  rate_limit: float = DEFAULT_RATE_LIMIT,
                  rate_limit_timeout: float = DEFAULT_RATE_LIMIT_TIMEOUT,
                  max_workers: int = DEFAULT_MAX_WORKERS,
