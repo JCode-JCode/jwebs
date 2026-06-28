@@ -10,6 +10,7 @@ jobs:
     name: Build wheels on ${{ matrix.os }}
     runs-on: ${{ matrix.os }}
     strategy:
+      fail-fast: false
       matrix:
         os: [ubuntu-latest, windows-latest, macos-latest]
         python-version: ["3.8", "3.9", "3.10", "3.11", "3.12"]
@@ -28,10 +29,15 @@ jobs:
       - name: Build wheels
         run: python -m cibuildwheel --output-dir wheelhouse
         env:
-          CIBW_SKIP: "pp*"
+          CIBW_BUILD: "cp3*"
           CIBW_ARCHS_LINUX: auto aarch64 armv7l
           CIBW_ARCHS_MACOS: auto arm64
           CIBW_ARCHS_WINDOWS: auto
+          CIBW_MANYLINUX_X86_64_IMAGE: manylinux2014
+          CIBW_MANYLINUX_AARCH64_IMAGE: manylinux2014_aarch64
+          CIBW_MANYLINUX_ARMV7L_IMAGE: manylinux2014_armv7l
+          CIBW_BEFORE_BUILD: pip install setuptools wheel
+          CIBW_ENVIRONMENT: "CFLAGS='-Os' CXXFLAGS='-Os'"
 
       - name: Upload wheels as artifacts
         uses: actions/upload-artifact@v4
